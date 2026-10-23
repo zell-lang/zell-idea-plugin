@@ -58,7 +58,17 @@
         <runLineMarkerContributor language="Zell" implementationClass="org.zell.idea.run.ZellRunLineMarkerContributor"/>
         <consoleFilterProvider implementation="org.zell.idea.run.ZellConsoleFilter$Provider"/>
 
+        <!-- Templates (org.zell.idea.templates) -->
+        <defaultLiveTemplates file="/liveTemplates/Zell.xml"/>
+        <liveTemplateContext contextId="ZELL" implementation="org.zell.idea.templates.ZellTemplateContextType"/>
+        <internalFileTemplate name="Zell File"/>
     </extensions>
+
+    <actions>
+        <action id="org.zell.idea.NewFile" class="org.zell.idea.templates.ZellCreateFileAction">
+            <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+        </action>
+    </actions>
 
     <applicationListeners>
         <listener class="org.zell.idea.toolchain.ZellLibraryRootProvider$ToolchainListener"

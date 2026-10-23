@@ -1,0 +1,44 @@
+<templateSet group="Zell">
+  <template name="func" value="func $NAME$($PARAMS$) $RESULT$ {&#10;    $END$&#10;}" description="Function" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="PARAMS" expression="" defaultValue="" alwaysStopAt="true"/>
+    <variable name="RESULT" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="afunc" value="async func $NAME$($PARAMS$) $RESULT$ {&#10;    $END$&#10;}" description="Async function" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;name&quot;" alwaysStopAt="true"/>
+    <variable name="PARAMS" expression="" defaultValue="" alwaysStopAt="true"/>
+    <variable name="RESULT" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="main" value="func main() {&#10;    $END$&#10;}" description="Program entry point" toReformat="false" toShortenFQNames="false">
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="struct" value="struct $NAME$ {&#10;    $END$&#10;}" description="Struct" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="test" value="@test func Test$NAME$(t *testing.T) {&#10;    $END$&#10;}" description="Test function (zell test)" toReformat="false" toShortenFQNames="false">
+    <variable name="NAME" expression="" defaultValue="&quot;Name&quot;" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="for" value="for $VAR$ in $RANGE$ {&#10;    $END$&#10;}" description="for-in loop" toReformat="false" toShortenFQNames="false">
+    <variable name="VAR" expression="" defaultValue="&quot;i&quot;" alwaysStopAt="true"/>
+    <variable name="RANGE" expression="" defaultValue="&quot;0..n&quot;" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="fori" value="for $I$, $V$ in $SLICE$ {&#10;    $END$&#10;}" description="for-in loop with index" toReformat="false" toShortenFQNames="false">
+    <variable name="I" expression="" defaultValue="&quot;i&quot;" alwaysStopAt="true"/>
+    <variable name="V" expression="" defaultValue="&quot;v&quot;" alwaysStopAt="true"/>
+    <variable name="SLICE" expression="" defaultValue="&quot;items&quot;" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="iferr" value="try $CALL$ catch err {&#10;    $END$&#10;}" description="Handle an error: try ... catch err (Zell's `if err != nil`)" toReformat="false" toShortenFQNames="false">
+    <variable name="CALL" expression="" defaultValue="&quot;f()&quot;" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+  <template name="if" value="if $COND$ {&#10;    $END$&#10;}" description="if statement" toReformat="false" toShortenFQNames="false">
+    <variable name="COND" expression="" defaultValue="" alwaysStopAt="true"/>
+    <context><option name="ZELL" value="true"/></context>
+  </template>
+</templateSet>

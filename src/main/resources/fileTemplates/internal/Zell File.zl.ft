@@ -1,0 +1,6 @@
+namespace ${NAMESPACE}
+
+#if (${NAME} == "main")
+func main() {
+}
+#end
