@@ -50,6 +50,14 @@
                                  instance="org.zell.idea.toolchain.ZellToolchainConfigurable"/>
 
         <notificationGroup id="Zell" displayType="BALLOON"/>
+
+        <!-- Run, build and test (org.zell.idea.run) -->
+        <configurationType implementation="org.zell.idea.run.ZellRunConfigurationType"/>
+        <runConfigurationProducer implementation="org.zell.idea.run.ZellRunProducer"/>
+        <runConfigurationProducer implementation="org.zell.idea.run.ZellTestProducer"/>
+        <runLineMarkerContributor language="Zell" implementationClass="org.zell.idea.run.ZellRunLineMarkerContributor"/>
+        <consoleFilterProvider implementation="org.zell.idea.run.ZellConsoleFilter$Provider"/>
+
     </extensions>
 
     <applicationListeners>

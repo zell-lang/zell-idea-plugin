@@ -17,9 +17,9 @@ import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
+import org.zell.idea.run.ZellPackages
 import org.zell.idea.toolchain.ZellToolchain
 import java.net.URI
-import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -59,12 +59,12 @@ object ZellLspCommands {
 
     private fun runTest(project: Project, uri: String, name: String) {
         val file = pathOf(uri) ?: return
-        runZell(project, file, "test $name", listOf("test", target(file), "--filter", "^$name$", "-v"))
+        runZell(project, file, "test $name", listOf("test", ZellPackages.target(file).toString(), "--filter", "^$name$", "-v"))
     }
 
     private fun runMain(project: Project, uri: String) {
         val file = pathOf(uri) ?: return
-        runZell(project, file, "run", listOf("run", target(file)))
+        runZell(project, file, "run", listOf("run", ZellPackages.target(file).toString()))
     }
 
     /** `zell <args>` in a Run tool window tab, from the project root (or the file's folder). */
@@ -88,17 +88,6 @@ object ZellLspCommands {
                 notify(project, "Cannot start `${commandLine.commandLineString}`: ${e.message}")
             }
         }
-    }
-
-    /** The package directory of [file] (nearest folder with a zell manifest), else the file itself. */
-    private fun target(file: Path): String {
-        var dir: Path? = file.parent
-        while (dir != null) {
-            val d: Path = dir
-            if (MANIFESTS.any { Files.isRegularFile(d.resolve(it)) }) return d.toString()
-            dir = d.parent
-        }
-        return file.toString()
     }
 
     private fun showReferences(project: Project, locations: Any?) {
@@ -164,7 +153,4 @@ object ZellLspCommands {
             .createNotification(text, NotificationType.INFORMATION)
             .notify(project)
     }
-
-    /** Package manifests, as in upstream editors/vscode `packageDir`. */
-    private val MANIFESTS = listOf("zell.toml", "zell.json", "zell.yaml", "zell.yml")
 }
