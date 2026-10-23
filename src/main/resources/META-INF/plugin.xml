@@ -40,6 +40,13 @@
 
         <lang.braceMatcher language="Zell" implementationClass="org.zell.idea.structure.ZellBraceMatcher"/>
         <lang.commenter language="Zell" implementationClass="org.zell.idea.structure.ZellCommenter"/>
+        <lang.quoteHandler language="Zell" implementationClass="org.zell.idea.editor.ZellQuoteHandler"/>
+        <spellchecker.support language="Zell" implementationClass="org.zell.idea.editor.ZellSpellcheckingStrategy"/>
+        <indexPatternBuilder implementation="org.zell.idea.editor.ZellIndexPatternBuilder"/>
+        <todoIndexer filetype="Zell" implementationClass="org.zell.idea.editor.ZellTodoIndexer"/>
+        <breadcrumbsInfoProvider implementation="org.zell.idea.editor.ZellBreadcrumbsProvider"/>
+        <lang.formatter language="Zell" implementationClass="org.zell.idea.formatter.ZellFormattingModelBuilder"/>
+        <formattingService implementation="org.zell.idea.formatter.ZellFormattingService"/>
         <lang.foldingBuilder language="Zell" implementationClass="org.zell.idea.structure.ZellFoldingBuilder"/>
         <lang.psiStructureViewFactory language="Zell"
                                       implementationClass="org.zell.idea.structure.ZellStructureViewFactory"/>

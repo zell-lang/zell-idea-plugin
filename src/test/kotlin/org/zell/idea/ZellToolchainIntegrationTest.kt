@@ -42,6 +42,16 @@ class ZellToolchainIntegrationTest : BasePlatformTestCase() {
         }
     }
 
+    /** Code › Reformat Code goes to `zell fmt --stdin` (ZellFormattingService). */
+    fun testReformatWithZellFmt() {
+        toolchain() ?: return
+        myFixture.configureByText("a.zl", "namespace a\nfunc main() {\nif true {\nprintln(1)\n}\n}\n")
+        com.intellij.openapi.command.WriteCommandAction.runWriteCommandAction(project) {
+            com.intellij.psi.codeStyle.CodeStyleManager.getInstance(project).reformat(myFixture.file)
+        }
+        myFixture.checkResult("namespace a\n\nfunc main() {\n    if true {\n        println(1)\n    }\n}\n")
+    }
+
     /** What the New Project wizard runs: `zell init <dir> --name n`. */
     fun testZellInit() {
         val dir = toolchain() ?: return
