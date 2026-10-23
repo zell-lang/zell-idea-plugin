@@ -69,10 +69,10 @@ src/main/kotlin/org/zell/idea/
   highlighting/ PSI syntax highlighter, color settings page (semantic tokens come from the LSP)
   structure/   structure view, breadcrumbs, folding, brace matcher, commenter, spellchecker
   formatter/   `zell fmt` as the formatter (via LSP textDocument/formatting or the CLI), code style page (read-only, gofmt-like)
-  run/         run configurations: zell run / build / test (test tree via `--json`), console filters for error traces
-  debug/       XDebugProcess over DAP to the in-process agent (breakpoints, stepping per task, variables)
+  run/         run configuration type + producers (zell run / build / test), gutter markers, test tree from `zell test --json` (SMTRunner), console filter for `file.zl:LINE`
+  debug/       (planned) XDebugProcess over DAP to the in-process agent (breakpoints, stepping per task, variables)
   toolchain/   locating zell/zell-lsp, ZELL_HOME, std root, versions, settings UI
-  templates/   live templates, file templates, new-project wizard (`zell init`)
+  templates/   live template context, File | New | Zell File action, new-project wizard (`zell init`); resources/liveTemplates, resources/fileTemplates
 src/main/grammar/  Zell.bnf (synced, do not edit) and Zell.flex (JFlex lexer mirroring compiler/src/lexer.rs)
 src/main/gen/      Grammar-Kit/JFlex output (committed)
 src/main/resources/META-INF/plugin.xml (+ zell-lsp.xml, optional on com.intellij.modules.ultimate), icons, colorSchemes, fileTemplates, inspectionDescriptions
@@ -102,7 +102,10 @@ Rule fixes the plugin needs before upstream has them live as unified diffs
 against upstream `grammar/zell.bnf` in `tools/grammar-patches/` (applied by
 the sync script, skipped once upstream contains them); send them upstream
 and delete them, never edit `src/main/grammar/Zell.bnf` by hand.
-`FIRST_RUN.md` is the checklist for the first build with network access.
+`FIRST_RUN.md` records what the first real build found (API checks, environment notes).
+The toolchain integration tests run when `ZELL_TOOLCHAIN` points to a directory with
+`zell` and `zell-lsp` (e.g. `../zell/target/release`), and are skipped otherwise.
+Gradle provisions JDK 21 through the foojay resolver if the machine has none.
 
 Grammar-Kit generation is a Gradle task (`generateZellParser`,
 `generateZellLexer`) with outputs under `src/main/gen` (committed, so IDE

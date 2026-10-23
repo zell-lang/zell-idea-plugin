@@ -8,9 +8,11 @@ language server `zell-lsp`, hosted through the platform's own LSP API
 
 The project was formerly named Slang (`.sl` files, `slang`/`slang-lsp`, plugin id `org.slang.idea`).
 
-Status: milestone 1 (skeleton) and the start of milestone 2 (LSP hosting).
-The code has not been built against the IntelliJ Platform yet; see
-[FIRST_RUN.md](FIRST_RUN.md) for the first local build and what to check.
+Status: milestones 1 (skeleton) and 2 (LSP hosting) done, milestone 3 (run
+and test) done except `zell fmt` on save, the templates and the wizard of
+milestone 5 done; the debugger (milestone 4) is designed, not written.
+Built, tested and verified against IntelliJ IDEA Ultimate 2024.2; see
+[FIRST_RUN.md](FIRST_RUN.md) for what the first build found.
 
 ## Install
 
@@ -38,10 +40,18 @@ zell repository; it links `zell` and `zell-lsp` into `~/.local/bin`.
 | 1 | Navigate › Symbol over top-level declarations | stub index |
 | 1 | Color scheme page (Settings › Editor › Color Scheme › Zell) | plugin |
 | 2 | Standard library (`zell env ZELL_STD`) as an external library | toolchain |
-| 2 | Diagnostics, go to definition, references, hover, completion, rename, code actions, semantic tokens, formatting (`zell fmt`) | zell-lsp |
+| 2 | Diagnostics, quick fixes, code actions, go to definition, references, hover, completion, formatting (`zell fmt`) | zell-lsp |
+| 2 | Semantic tokens, inlay hints, code lenses (offered by zell-lsp; rendered only by platform builds newer than 242) | zell-lsp |
 | 2 | Tools › Restart Zell Language Server | plugin |
 | 2 | Code lens commands: Run test, Debug test (runs with `-v`), Run, N references (`zell.runTest`, `zell.debugTest`, `zell.run`, `zell.showReferences`) | zell-lsp + plugin |
-| 3–5 | Run/test configurations, debugger (DAP), templates, wizard | planned, see CLAUDE.md |
+| 3 | Run configuration **Zell**: `zell run`, `zell build`, `zell test` (target, compiler options, program arguments, test filter, working directory, environment) | plugin |
+| 3 | Gutter Run markers on `func main` and `@test` functions; Run from the editor/project view | configuration producers |
+| 3 | Test tree from `zell test --json`, with navigation to the test function | SMTRunner |
+| 3 | Links for `file.zl:LINE[:COL]` in any console: diagnostics, error traces, test reports | console filter |
+| 4 | Debugger over the in-process agent (DAP) | planned, see CLAUDE.md |
+| 5 | Live templates: `func`, `afunc`, `main`, `struct`, `test`, `for`, `fori`, `iferr` (`try … catch err`), `if` | plugin |
+| 5 | File › New › Zell File (namespace from a sibling file, the manifest or the folder) | file template |
+| 5 | File › New › Project › Zell (`zell init`, optional `--lib` and manifest format) | wizard |
 
 ## Settings
 
@@ -60,7 +70,8 @@ standard library.
 
 ```sh
 tools/sync-zell.sh                 # build/zell at the pinned commit + src/main/grammar/Zell.bnf
-./gradlew test                      # lexer, parser corpus, highlighting, folding, structure tests
+./gradlew test                      # lexer, parser corpus, highlighting, folding, structure, run, template tests
+ZELL_TOOLCHAIN=../zell/target/release ./gradlew test   # also zell init / zell-lsp integration tests
 ./gradlew runIde                    # sandbox IDE (IntelliJ IDEA Ultimate 2024.2)
 ./gradlew buildPlugin verifyPlugin  # zip + Plugin Verifier
 ```
