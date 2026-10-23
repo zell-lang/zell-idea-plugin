@@ -50,6 +50,8 @@
                                  instance="org.zell.idea.toolchain.ZellToolchainConfigurable"/>
 
         <notificationGroup id="Zell" displayType="BALLOON"/>
+        <editorNotificationProvider implementation="org.zell.idea.toolchain.ZellToolchainNotificationProvider"/>
+        <fileIconProvider implementation="org.zell.idea.lang.ZellManifestIconProvider"/>
 
         <!-- Run, build and test (org.zell.idea.run) -->
         <configurationType implementation="org.zell.idea.run.ZellRunConfigurationType"/>
@@ -73,6 +75,8 @@
 
     <applicationListeners>
         <listener class="org.zell.idea.toolchain.ZellLibraryRootProvider$ToolchainListener"
+                  topic="org.zell.idea.toolchain.ZellToolchain$Listener"/>
+        <listener class="org.zell.idea.toolchain.ZellToolchainNotificationProvider$ToolchainListener"
                   topic="org.zell.idea.toolchain.ZellToolchain$Listener"/>
     </applicationListeners>
 </idea-plugin>

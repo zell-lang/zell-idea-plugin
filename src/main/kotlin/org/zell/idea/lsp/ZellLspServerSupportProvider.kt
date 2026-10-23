@@ -11,8 +11,12 @@ import com.intellij.platform.lsp.api.LspServerSupportProvider
 import com.intellij.platform.lsp.api.ProjectWideLspServerDescriptor
 import com.intellij.platform.lsp.api.customization.LspCommandsSupport
 import com.intellij.platform.lsp.api.customization.LspFormattingSupport
+import com.intellij.platform.lsp.api.lsWidget.LspServerWidgetItem
 import org.eclipse.lsp4j.Command
 import org.zell.idea.lang.ZellFileType
+import org.zell.idea.lang.ZellIcons
+import org.zell.idea.toolchain.ZellToolchainActions
+import org.zell.idea.toolchain.ZellToolchainConfigurable
 import org.zell.idea.toolchain.ZellToolchain
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -39,16 +43,26 @@ class ZellLspServerSupportProvider : LspServerSupportProvider {
         serverStarter.ensureServerStarted(ZellLspServerDescriptor(project))
     }
 
+    /**
+     * The item of the platform's "Language Services" status bar widget: server
+     * state (running / error), restart and stop actions, and a link to the Zell
+     * settings page, under the Zell icon.
+     */
+    override fun createLspServerWidgetItem(lspServer: LspServer, currentFile: VirtualFile?): LspServerWidgetItem =
+        LspServerWidgetItem(lspServer, currentFile, ZellIcons.FILE, ZellToolchainConfigurable::class.java)
+
     private fun notifyMissingToolchain(project: Project) {
         if (!warned.compareAndSet(false, true)) return
-        NotificationGroupManager.getInstance()
+        val notification = NotificationGroupManager.getInstance()
             .getNotificationGroup("Zell")
             .createNotification(
                 "Zell language server not found",
-                "Install the toolchain (scripts/install.sh from the zell repository) or set the paths in " +
-                    "Settings | Languages &amp; Frameworks | Zell. Highlighting and structure work without it.",
+                "Install the toolchain or set the paths in Settings | Languages &amp; Frameworks | Zell. " +
+                    "Highlighting and structure work without it.",
                 NotificationType.WARNING,
             )
+            .setIcon(ZellIcons.FILE)
+        ZellToolchainActions.addTo(notification)
             .notify(project)
     }
 
