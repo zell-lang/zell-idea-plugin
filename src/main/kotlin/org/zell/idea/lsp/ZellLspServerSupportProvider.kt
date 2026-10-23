@@ -72,7 +72,8 @@ class ZellLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
 
     override fun createCommandLine(): GeneralCommandLine =
         (ZellToolchain.lspCommandLine() ?: error("zell-lsp not found"))
-            .withWorkDirectory(project.basePath)
+            // The project root, when it exists on disk (not for default or light test projects).
+            .withWorkDirectory(project.basePath?.takeIf { java.io.File(it).isDirectory })
 
     /** `zell` is the language id zell-lsp expects (editors/vscode uses it too). */
     override fun getLanguageId(file: VirtualFile): String = "zell"

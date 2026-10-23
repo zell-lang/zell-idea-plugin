@@ -62,6 +62,7 @@
         <defaultLiveTemplates file="/liveTemplates/Zell.xml"/>
         <liveTemplateContext contextId="ZELL" implementation="org.zell.idea.templates.ZellTemplateContextType"/>
         <internalFileTemplate name="Zell File"/>
+        <newProjectWizard.generator implementation="org.zell.idea.templates.ZellNewProjectWizard"/>
     </extensions>
 
     <actions>

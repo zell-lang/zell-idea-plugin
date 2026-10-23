@@ -103,5 +103,8 @@ tasks {
         // The parser corpus test reads build/zell (tools/sync-zell.sh).
         systemProperty("zell.corpus", layout.buildDirectory.dir("zell").get().asFile.absolutePath)
         inputs.dir(layout.buildDirectory.dir("zell")).optional().withPropertyName("zellCorpus")
+        // Directory with `zell` and `zell-lsp` for the toolchain integration tests
+        // (skipped when unset), e.g. ZELL_TOOLCHAIN=../zell/target/release.
+        providers.environmentVariable("ZELL_TOOLCHAIN").orNull?.let { systemProperty("zell.toolchain", it) }
     }
 }
