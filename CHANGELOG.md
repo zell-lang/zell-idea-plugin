@@ -12,6 +12,11 @@ release. Move entries under a dated heading when cutting a stable release.
 
 ### Added
 - Date-based plugin versions (`YYYY.M.N`) and a GitHub pre-release with the installable zip for every CI build on `main`
+- Code › Reformat Code and Reformat on save with `zell fmt` in every IDE
+- Auto-closing quotes and raw strings, indentation on Enter, TODO view, spellchecking, breadcrumbs
+- Zell icon on package manifests; the language server in the status bar's Language Services widget
+- Editor banner with Download and Settings when the toolchain is missing; tool versions on the settings page
+- New file kinds (main program, test file), Surround With `try … catch`, postfix `.var` and `.return`
 
 ## 2026.10.0
 

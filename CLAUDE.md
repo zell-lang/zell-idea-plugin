@@ -67,8 +67,9 @@ src/main/kotlin/org/zell/idea/
   stubs/       stub indexes for declarations (structure/search by name only; semantics come from the LSP)
   lsp/         LspServerSupportProvider + ProjectWideLspServerDescriptor for zell-lsp, settings (inlay hints), restart action, custom LSP requests if needed
   highlighting/ PSI syntax highlighter, color settings page (semantic tokens come from the LSP)
-  structure/   structure view, breadcrumbs, folding, brace matcher, commenter, spellchecker
-  formatter/   `zell fmt` as the formatter (via LSP textDocument/formatting or the CLI), code style page (read-only, gofmt-like)
+  structure/   structure view, folding, brace matcher, commenter
+  editor/      quote handler, spellchecker strategy, TODO indexer/pattern builder, breadcrumbs
+  formatter/   `zell fmt --stdin` as the formatting service (all IDEs); an indentation-only formatting model for Enter/auto-indent
   run/         run configuration type + producers (zell run / build / test), gutter markers, test tree from `zell test --json` (SMTRunner), console filter for `file.zl:LINE`
   debug/       (planned) XDebugProcess over DAP to the in-process agent (breakpoints, stepping per task, variables)
   toolchain/   locating zell/zell-lsp, ZELL_HOME, std root, versions, settings UI
@@ -140,6 +141,11 @@ indexing works without a build).
 - **Git**: work on `main`, small commits in English imperative; never
   commit `build/`, `.gradle/`, `.intellijPlatform/`, or the synced
   `build/zell`.
+- **Versions and releases**: versions are `YYYY.M.N` (N = CI run number);
+  CI passes `-PpluginVersion`, local builds use `gradle.properties`
+  (`-local`). Every CI build on `main` becomes a GitHub pre-release
+  (`v<version>`, plugin zip, notes from CHANGELOG "Unreleased" + commits);
+  add user-visible changes to "Unreleased" in `CHANGELOG.md`.
 - **Release**: `./gradlew buildPlugin verifyPlugin`; publishing to
   JetBrains Marketplace is done by the maintainer with their token
   (`PUBLISH_TOKEN` env in CI), never from an agent session.
