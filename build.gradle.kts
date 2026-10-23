@@ -14,7 +14,43 @@ plugins {
 }
 
 group = providers.gradleProperty("pluginGroup").get()
-version = providers.gradleProperty("pluginVersion").get()
+
+// Plugin version: `YYYY.M.N`. CI passes `-PpluginVersion=$(date -u +%Y.%-m).<run_number>`
+// (or sets PLUGIN_VERSION) so every build has its own version; a local build
+// uses `pluginVersion` from gradle.properties (a `-local` version).
+val pluginVersion: Provider<String> = providers.environmentVariable("PLUGIN_VERSION")
+    .orElse(providers.gradleProperty("pluginVersion"))
+version = pluginVersion.get()
+
+/**
+ * The "Unreleased" section of CHANGELOG.md as HTML for `<change-notes>`:
+ * `### Heading` becomes `<h3>`, `- item` becomes `<li>`, `code` spans become `<code>`.
+ */
+fun unreleasedChangeNotes(changelog: File): String {
+    if (!changelog.isFile) return ""
+    val section = changelog.readLines()
+        .dropWhile { !it.trim().equals("## Unreleased", ignoreCase = true) }
+        .drop(1)
+        .takeWhile { !it.startsWith("## ") }
+    fun inline(text: String) = text
+        .replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+        .replace(Regex("`([^`]+)`"), "<code>$1</code>")
+    val html = StringBuilder()
+    var inList = false
+    for (line in section.map { it.trim() }.filter { it.isNotEmpty() }) {
+        val item = line.startsWith("- ") || line.startsWith("* ")
+        if (item && !inList) html.append("<ul>")
+        if (!item && inList) html.append("</ul>")
+        inList = item
+        when {
+            item -> html.append("<li>").append(inline(line.substring(2))).append("</li>")
+            line.startsWith("#") -> html.append("<h3>").append(inline(line.trimStart('#').trim())).append("</h3>")
+            else -> html.append("<p>").append(inline(line)).append("</p>")
+        }
+    }
+    if (inList) html.append("</ul>")
+    return html.toString()
+}
 
 // IntelliJ Platform 2024.2 (242) runs on and is compiled for Java 21.
 kotlin {
@@ -55,7 +91,8 @@ intellijPlatform {
     pluginConfiguration {
         id = "org.zell.idea"
         name = providers.gradleProperty("pluginName")
-        version = providers.gradleProperty("pluginVersion")
+        version = pluginVersion
+        changeNotes = providers.provider { unreleasedChangeNotes(layout.projectDirectory.file("CHANGELOG.md").asFile) }
         ideaVersion {
             sinceBuild = providers.gradleProperty("pluginSinceBuild")
             untilBuild = providers.gradleProperty("pluginUntilBuild")
@@ -64,13 +101,12 @@ intellijPlatform {
 
     pluginVerification {
         ides {
-            // The plugin must load in Community (without LSP) and in Ultimate (with LSP).
-            // TODO(verify): these exact releases resolve (`./gradlew printProductsReleases`);
-            // `recommended()` is the alternative.
+            // Two IDEs keep CI cheap: the oldest supported Community build (no
+            // platform LSP API, so the optional zell-lsp.xml must stay unloaded) and
+            // the newest supported Ultimate (LSP API as of untilBuild). Ultimate
+            // 2024.2 is the compile target and needs no extra run.
             create(IntelliJPlatformType.IntellijIdeaCommunity, "2024.2.4")
-            create(IntelliJPlatformType.IntellijIdeaUltimate, "2024.2.4")
             create(IntelliJPlatformType.IntellijIdeaUltimate, "2025.2")
-            create(IntelliJPlatformType.GoLand, "2024.2.3")
         }
     }
 }

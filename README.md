@@ -16,9 +16,22 @@ Built, tested and verified against IntelliJ IDEA Ultimate 2024.2; see
 
 ## Install
 
-Build the plugin (`./gradlew buildPlugin`) or download the `zell-idea-plugin`
-artifact of a CI run, then in the IDE: **Settings | Plugins | ⚙ | Install
-Plugin from Disk…** and pick `build/distributions/zell-idea-plugin-*.zip`.
+Every CI build on `main` is published as a pre-release on the
+[releases page](https://github.com/zell-lang/zell-idea-plugin/releases):
+`https://github.com/zell-lang/zell-idea-plugin/releases/tag/v<version>`, with the zip at
+`https://github.com/zell-lang/zell-idea-plugin/releases/download/v<version>/zell-idea-plugin-<version>.zip`.
+Download the zip, then in the IDE: **Settings | Plugins | ⚙ | Install
+Plugin from Disk…** and pick it (do not unpack it). A local build
+(`./gradlew buildPlugin`) puts the zip in `build/distributions/`.
+
+Versions are `YYYY.M.N`: year and month of the build plus the CI run number,
+so every build differs (`.github/workflows/build.yml` passes
+`-PpluginVersion=$(date -u +%Y.%-m).<run_number>`; `PLUGIN_VERSION` in the
+environment works too). Local builds use `pluginVersion` from
+`gradle.properties` (`2026.10.0-local`). The change notes in the plugin and
+the release notes come from the **Unreleased** section of
+[CHANGELOG.md](CHANGELOG.md); the release notes add the commits since the
+previous release tag.
 
 Supported IDEs: 2024.2 – 2025.2 (builds 242 – 252.*). The LSP features need
 a commercial IDE (IntelliJ IDEA Ultimate, GoLand, WebStorm, …); in IntelliJ
@@ -73,7 +86,7 @@ tools/sync-zell.sh                 # build/zell at the pinned commit + src/main/
 ./gradlew test                      # lexer, parser corpus, highlighting, folding, structure, run, template tests
 ZELL_TOOLCHAIN=../zell/target/release ./gradlew test   # also zell init / zell-lsp integration tests
 ./gradlew runIde                    # sandbox IDE (IntelliJ IDEA Ultimate 2024.2)
-./gradlew buildPlugin verifyPlugin  # zip + Plugin Verifier
+./gradlew buildPlugin verifyPlugin  # zip + Plugin Verifier (IC 2024.2.4 and IU 2025.2; slow, CI runs it)
 ```
 
 The grammar is synced from the zell repository at `zellCommit`
