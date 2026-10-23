@@ -23,7 +23,6 @@ class ZellLspRestartAction : AnAction(), DumbAware {
 
     companion object {
         fun restart(project: com.intellij.openapi.project.Project) {
-            // TODO(verify): LspServerManager.stopAndRestartIfNeeded(Class) in 2024.2.
             LspServerManager.getInstance(project).stopAndRestartIfNeeded(ZellLspServerSupportProvider::class.java)
         }
     }

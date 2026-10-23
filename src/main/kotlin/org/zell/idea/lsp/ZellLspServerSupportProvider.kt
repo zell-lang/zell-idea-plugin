@@ -21,10 +21,11 @@ import java.util.concurrent.atomic.AtomicBoolean
  * the way the Go plugin hosts gopls. Loaded only in IDEs with
  * com.intellij.modules.ultimate (META-INF/zell-lsp.xml).
  *
- * TODO(verify): every LSP API member used here against
- * https://plugins.jetbrains.com/docs/intellij/language-server-protocol.html
- * for 2024.2 (242); the module is closed source, so these signatures were
- * written from the documentation, not compiled here.
+ * Compiled and checked (javap) against IU-242.20224.300, where the LSP API
+ * lives in lib/product.jar. The 242 client supports diagnostics, quick fixes,
+ * code actions, completion, go to definition, hover, find references,
+ * commands and formatting; semantic tokens, inlay hints and code lenses are
+ * only rendered by newer platform builds (the server offers them anyway).
  */
 
 /** Starts one zell-lsp per project when a `.zl` file is opened. */
@@ -73,7 +74,7 @@ class ZellLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
         (ZellToolchain.lspCommandLine() ?: error("zell-lsp not found"))
             .withWorkDirectory(project.basePath)
 
-    /** `zell` is the language id zell-lsp expects (editors/vscode uses it too). TODO(verify): overridable in 242. */
+    /** `zell` is the language id zell-lsp expects (editors/vscode uses it too). */
     override fun getLanguageId(file: VirtualFile): String = "zell"
 
     /**
@@ -81,8 +82,8 @@ class ZellLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
      * push diagnostics, as recommended for IntelliJ (the platform client is
      * push-based; `auto` would pick pull if the client announced
      * `textDocument.diagnostic`, and the server never sends both), and the
-     * inlay hint kinds editors/vscode sends as `zell.inlayHints.*`.
-     * TODO(verify): `createInitializationOptions(): Any?` in 242 (serialized by lsp4j's Gson).
+     * inlay hint kinds editors/vscode sends as `zell.inlayHints.*`
+     * (serialized by lsp4j's Gson).
      */
     override fun createInitializationOptions(): Any = JsonObject().apply {
         add("diagnostics", JsonObject().apply { addProperty("mode", "push") })
@@ -95,10 +96,8 @@ class ZellLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
     /**
      * Client-side commands of zell-lsp's code lenses (`zell.runTest`,
      * `zell.debugTest`, `zell.run`, `zell.showReferences`); see [ZellLspCommands].
-     * TODO(verify): `lspCommandsSupport: LspCommandsSupport?` with
-     * `executeCommand(server, contextFile, command)` in 242, and from which
-     * build the platform renders LSP code lenses at all (newer than 242 is
-     * possible; until then these commands are simply never invoked).
+     * 242 has no LSP code lens UI, so there they are only reached through
+     * code actions; the gutter run markers (org.zell.idea.run) cover main and tests.
      */
     override val lspCommandsSupport: LspCommandsSupport = object : LspCommandsSupport() {
         override fun executeCommand(server: LspServer, contextFile: VirtualFile, command: Command) {
@@ -108,8 +107,8 @@ class ZellLspServerDescriptor(project: Project) : ProjectWideLspServerDescriptor
         }
     }
 
-    // TODO(verify): in 2024.2 these are `open val`s of LspServerDescriptor with
-    // these types; 2025.1 moved them to `lspCustomization`. Defaults are all on.
+    // `open val`s of LspServerDescriptor in 242 (2025.1 moves them to
+    // `lspCustomization` and deprecates these). Defaults are all on.
     override val lspGoToDefinitionSupport: Boolean = true
 
     override val lspHoverSupport: Boolean = true

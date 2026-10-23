@@ -49,6 +49,7 @@ class ZellParserCorpusTest : ParsingTestCase("", "zl", ZellParserDefinition()) {
                 failures.add("${f.relativeTo(root)}:$line: ${e.errorDescription} | $lineText")
             }
         }
+        println("zell corpus: $parsed files parsed, ${files.size - parsed} skipped (lexer errors), ${failures.size} with parse errors")
         if (failures.isNotEmpty()) {
             fail(
                 "${failures.size} of $parsed corpus files have parse errors:\n" +

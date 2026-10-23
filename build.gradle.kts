@@ -34,17 +34,16 @@ sourceSets {
 
 dependencies {
     intellijPlatform {
-        // The platform LSP API (com.intellij.platform.lsp.api) is only in commercial IDEs.
+        // The platform LSP API (com.intellij.platform.lsp.api) is only in commercial IDEs;
+        // in 242 it is part of lib/product.jar, on the classpath without bundledModule().
         intellijIdeaUltimate(providers.gradleProperty("platformVersion"))
-        // TODO(verify): if compileKotlin cannot resolve com.intellij.platform.lsp.*, the LSP
-        // API jar is a separate platform module in this IDE layout; add it explicitly:
-        //   bundledModule("intellij.platform.lsp.impl")
-        // (https://plugins.jetbrains.com/docs/intellij/tools-intellij-platform-gradle-plugin-dependencies-extension.html)
         testFramework(TestFrameworkType.Platform)
         pluginVerifier()
         zipSigner()
     }
     testImplementation("junit:junit:4.13.2")
+    // The platform test framework references opentest4j (assertion classes) without shipping it.
+    testImplementation("org.opentest4j:opentest4j:1.3.0")
 }
 
 intellijPlatform {

@@ -11,6 +11,9 @@ plugins {
     // Registers the `intellijPlatform { ... }` repositories helper for
     // dependencyResolutionManagement (IntelliJ Platform Gradle Plugin 2.x).
     id("org.jetbrains.intellij.platform.settings") version "2.9.0"
+    // Provisions the JDK 21 toolchain (kotlin.jvmToolchain(21)) when the
+    // machine has only a JRE or another JDK version.
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
 
 rootProject.name = "zell-idea-plugin"
