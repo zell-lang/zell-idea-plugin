@@ -41,4 +41,7 @@
     <variable name="COND" expression="" defaultValue="" alwaysStopAt="true"/>
     <context><option name="ZELL" value="true"/></context>
   </template>
+  <template name="try" value="try {&#10;    $SELECTION$&#10;} catch err {&#10;    $END$&#10;}" description="Surround with try { ... } catch err { ... }" toReformat="false" toShortenFQNames="false">
+    <context><option name="ZELL" value="true"/></context>
+  </template>
 </templateSet>

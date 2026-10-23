@@ -71,6 +71,10 @@
         <defaultLiveTemplates file="/liveTemplates/Zell.xml"/>
         <liveTemplateContext contextId="ZELL" implementation="org.zell.idea.templates.ZellTemplateContextType"/>
         <internalFileTemplate name="Zell File"/>
+        <internalFileTemplate name="Zell Main"/>
+        <internalFileTemplate name="Zell Test"/>
+        <codeInsight.template.postfixTemplateProvider language="Zell"
+                                                      implementationClass="org.zell.idea.templates.ZellPostfixTemplateProvider"/>
         <newProjectWizard.generator implementation="org.zell.idea.templates.ZellNewProjectWizard"/>
     </extensions>
 

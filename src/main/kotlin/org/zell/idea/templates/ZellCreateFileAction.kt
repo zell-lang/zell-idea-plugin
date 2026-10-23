@@ -14,10 +14,17 @@ import org.zell.idea.lang.ZellIcons
 import org.zell.idea.run.ZellPackages
 import java.nio.file.Files
 
-/** File | New | Zell File: `namespace <ns>` (+ `func main` for `main.zl`) from the "Zell File" template. */
+/**
+ * File | New | Zell File with three kinds: a plain file (`namespace <ns>`, plus
+ * `func main` for `main.zl`), a main program and a test file (`<name>_test.zl`
+ * with an `@test` function).
+ */
 class ZellCreateFileAction : CreateFileFromTemplateAction("Zell File", "Create a Zell source file", ZellIcons.FILE), DumbAware {
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
-        builder.setTitle("New Zell File").addKind("Zell file", ZellIcons.FILE, TEMPLATE)
+        builder.setTitle("New Zell File")
+            .addKind("Zell file", ZellIcons.FILE, TEMPLATE)
+            .addKind("Main program", ZellIcons.FILE, MAIN_TEMPLATE)
+            .addKind("Test file", ZellIcons.FILE, TEST_TEMPLATE)
     }
 
     override fun getActionName(directory: PsiDirectory?, newName: String, templateName: String?): String =
@@ -26,12 +33,25 @@ class ZellCreateFileAction : CreateFileFromTemplateAction("Zell File", "Create a
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
         val props = FileTemplateManager.getInstance(dir.project).defaultProperties
         props.setProperty("NAMESPACE", namespaceFor(dir))
-        val fileName = name.removeSuffix(".zl")
+        var fileName = name.removeSuffix(".zl")
+        if (template.name == TEST_TEMPLATE) {
+            if (!fileName.endsWith("_test")) fileName += "_test"
+            props.setProperty("TEST_NAME", testName(fileName))
+        }
         return FileTemplateUtil.createFromTemplate(template, fileName, props, dir) as? PsiFile
     }
 
     companion object {
         const val TEMPLATE = "Zell File"
+        const val MAIN_TEMPLATE = "Zell Main"
+        const val TEST_TEMPLATE = "Zell Test"
+
+        /** `TestParser` for `parser_test`, `TestHttpClient` for `http_client_test`. */
+        fun testName(fileName: String): String {
+            val words = fileName.removeSuffix("_test").split('_', '-', '.').filter { it.isNotEmpty() }
+            val name = words.joinToString("") { w -> w.replaceFirstChar { it.uppercaseChar() } }
+            return name.ifEmpty { "Name" }.let { if (it[0].isDigit()) "_$it" else it }
+        }
 
         /**
          * The namespace of a sibling `.zl` file, else the package's root

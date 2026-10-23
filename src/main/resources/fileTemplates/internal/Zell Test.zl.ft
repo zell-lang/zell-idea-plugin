@@ -1,0 +1,4 @@
+namespace ${NAMESPACE}
+
+@test func Test${TEST_NAME}(t *testing.T) {
+}
