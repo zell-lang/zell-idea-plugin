@@ -77,6 +77,12 @@ public class ZellTopLevelDeclImpl extends ASTWrapperPsiElement implements ZellTo
 
   @Override
   @Nullable
+  public ZellTypeAliasDecl getTypeAliasDecl() {
+    return PsiTreeUtil.getChildOfType(this, ZellTypeAliasDecl.class);
+  }
+
+  @Override
+  @Nullable
   public ZellVarDecl getVarDecl() {
     return PsiTreeUtil.getChildOfType(this, ZellVarDecl.class);
   }

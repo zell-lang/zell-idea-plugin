@@ -11,9 +11,9 @@ public interface ZellFieldDecl extends PsiElement {
   ZellExpr getExpr();
 
   @NotNull
-  ZellType getType();
+  List<ZellFieldName> getFieldNameList();
 
-  @Nullable
-  PsiElement getIdentifier();
+  @NotNull
+  ZellType getType();
 
 }

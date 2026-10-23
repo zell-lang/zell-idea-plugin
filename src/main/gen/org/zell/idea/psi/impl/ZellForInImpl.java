@@ -45,4 +45,10 @@ public class ZellForInImpl extends ASTWrapperPsiElement implements ZellForIn {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, ZellVarName.class);
   }
 
+  @Override
+  @NotNull
+  public PsiElement getIdentifier() {
+    return notNullChild(findChildByType(IDENTIFIER));
+  }
+
 }

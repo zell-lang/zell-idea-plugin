@@ -16,4 +16,7 @@ public interface ZellForIn extends PsiElement {
   @NotNull
   List<ZellVarName> getVarNameList();
 
+  @NotNull
+  PsiElement getIdentifier();
+
 }

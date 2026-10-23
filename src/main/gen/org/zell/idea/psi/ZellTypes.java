@@ -36,6 +36,7 @@ public interface ZellTypes {
   IElementType EXTERN_FUNC_DECL = new ZellElementType("EXTERN_FUNC_DECL");
   IElementType FIELD_DECL = new ZellElementType("FIELD_DECL");
   IElementType FIELD_INIT = new ZellElementType("FIELD_INIT");
+  IElementType FIELD_NAME = new ZellElementType("FIELD_NAME");
   IElementType FOR_HEADER = new ZellElementType("FOR_HEADER");
   IElementType FOR_IN = new ZellElementType("FOR_IN");
   IElementType FOR_STMT = new ZellElementType("FOR_STMT");
@@ -86,6 +87,7 @@ public interface ZellTypes {
   IElementType TRY_STMT = new ZellElementType("TRY_STMT");
   IElementType TUPLE_TYPE = new ZellElementType("TUPLE_TYPE");
   IElementType TYPE = new ZellElementType("TYPE");
+  IElementType TYPE_ALIAS_DECL = new ZellElementType("TYPE_ALIAS_DECL");
   IElementType TYPE_BIND_PATTERN = new ZellElementType("TYPE_BIND_PATTERN");
   IElementType UNARY_EXPR = new ZellElementType("UNARY_EXPR");
   IElementType VAR_DECL = new ZellElementType("VAR_DECL");
@@ -130,7 +132,6 @@ public interface ZellTypes {
   IElementType IDENTIFIER = new ZellTokenType("IDENTIFIER");
   IElementType IF = new ZellTokenType("if");
   IElementType IMPORT = new ZellTokenType("import");
-  IElementType IN = new ZellTokenType("in");
   IElementType INTERFACE = new ZellTokenType("interface");
   IElementType INT_LITERAL = new ZellTokenType("INT_LITERAL");
   IElementType LBRACE = new ZellTokenType("{");
@@ -261,6 +262,9 @@ public interface ZellTypes {
       }
       else if (type == FIELD_INIT) {
         return new ZellFieldInitImpl(node);
+      }
+      else if (type == FIELD_NAME) {
+        return new ZellFieldNameImpl(node);
       }
       else if (type == FOR_HEADER) {
         return new ZellForHeaderImpl(node);
@@ -411,6 +415,9 @@ public interface ZellTypes {
       }
       else if (type == TYPE) {
         return new ZellTypeImpl(node);
+      }
+      else if (type == TYPE_ALIAS_DECL) {
+        return new ZellTypeAliasDeclImpl(node);
       }
       else if (type == TYPE_BIND_PATTERN) {
         return new ZellTypeBindPatternImpl(node);

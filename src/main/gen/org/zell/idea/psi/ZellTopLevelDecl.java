@@ -32,6 +32,9 @@ public interface ZellTopLevelDecl extends PsiElement {
   ZellStructDecl getStructDecl();
 
   @Nullable
+  ZellTypeAliasDecl getTypeAliasDecl();
+
+  @Nullable
   ZellVarDecl getVarDecl();
 
 }

@@ -282,7 +282,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ((IDENTIFIER | DEFAULT) COLON)? expr
+  // (field_name COLON)? expr
   public static boolean attribute_arg(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "attribute_arg")) return false;
     boolean result_;
@@ -293,30 +293,21 @@ public class ZellParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // ((IDENTIFIER | DEFAULT) COLON)?
+  // (field_name COLON)?
   private static boolean attribute_arg_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "attribute_arg_0")) return false;
     attribute_arg_0_0(builder_, level_ + 1);
     return true;
   }
 
-  // (IDENTIFIER | DEFAULT) COLON
+  // field_name COLON
   private static boolean attribute_arg_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "attribute_arg_0_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = attribute_arg_0_0_0(builder_, level_ + 1);
+    result_ = field_name(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, COLON);
     exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // IDENTIFIER | DEFAULT
-  private static boolean attribute_arg_0_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "attribute_arg_0_0_0")) return false;
-    boolean result_;
-    result_ = consumeToken(builder_, IDENTIFIER);
-    if (!result_) result_ = consumeToken(builder_, DEFAULT);
     return result_;
   }
 
@@ -412,7 +403,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (IDENTIFIER COLON)? expr
+  // (field_name COLON)? expr
   public static boolean call_arg(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "call_arg")) return false;
     boolean result_;
@@ -423,19 +414,20 @@ public class ZellParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // (IDENTIFIER COLON)?
+  // (field_name COLON)?
   private static boolean call_arg_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "call_arg_0")) return false;
     call_arg_0_0(builder_, level_ + 1);
     return true;
   }
 
-  // IDENTIFIER COLON
+  // field_name COLON
   private static boolean call_arg_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "call_arg_0_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, IDENTIFIER, COLON);
+    result_ = field_name(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, COLON);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -806,38 +798,51 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (IDENTIFIER | DEFAULT) type (ASSIGN expr)?
+  // field_name (COMMA field_name)* type (ASSIGN expr)?
   public static boolean field_decl(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "field_decl")) return false;
-    if (!nextTokenIs(builder_, "<field decl>", DEFAULT, IDENTIFIER)) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, FIELD_DECL, "<field decl>");
-    result_ = field_decl_0(builder_, level_ + 1);
+    result_ = field_name(builder_, level_ + 1);
+    result_ = result_ && field_decl_1(builder_, level_ + 1);
     result_ = result_ && type(builder_, level_ + 1);
-    result_ = result_ && field_decl_2(builder_, level_ + 1);
+    result_ = result_ && field_decl_3(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
 
-  // IDENTIFIER | DEFAULT
-  private static boolean field_decl_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "field_decl_0")) return false;
+  // (COMMA field_name)*
+  private static boolean field_decl_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "field_decl_1")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!field_decl_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "field_decl_1", pos_)) break;
+    }
+    return true;
+  }
+
+  // COMMA field_name
+  private static boolean field_decl_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "field_decl_1_0")) return false;
     boolean result_;
-    result_ = consumeToken(builder_, IDENTIFIER);
-    if (!result_) result_ = consumeToken(builder_, DEFAULT);
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && field_name(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // (ASSIGN expr)?
-  private static boolean field_decl_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "field_decl_2")) return false;
-    field_decl_2_0(builder_, level_ + 1);
+  private static boolean field_decl_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "field_decl_3")) return false;
+    field_decl_3_0(builder_, level_ + 1);
     return true;
   }
 
   // ASSIGN expr
-  private static boolean field_decl_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "field_decl_2_0")) return false;
+  private static boolean field_decl_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "field_decl_3_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, ASSIGN);
@@ -847,15 +852,53 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // IDENTIFIER COLON expr
+  // field_name COLON expr
   public static boolean field_init(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "field_init")) return false;
-    if (!nextTokenIs(builder_, IDENTIFIER)) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, IDENTIFIER, COLON);
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, FIELD_INIT, "<field init>");
+    result_ = field_name(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, COLON);
     result_ = result_ && expr(builder_, level_ + 1);
-    exit_section_(builder_, marker_, FIELD_INIT, result_);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // IDENTIFIER | NAMESPACE | IMPORT | AS | STRUCT | INTERFACE | ENUM | AWAIT | VAR | CONST | IF | ELSE | FOR | SWITCH | CASE | DEFAULT | RETURN | BREAK | CONTINUE | DEFER | TRY | CATCH | NEW | NIL | TRUE | FALSE | MAP | THIS
+  public static boolean field_name(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "field_name")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, FIELD_NAME, "<field name>");
+    result_ = consumeToken(builder_, IDENTIFIER);
+    if (!result_) result_ = consumeToken(builder_, NAMESPACE);
+    if (!result_) result_ = consumeToken(builder_, IMPORT);
+    if (!result_) result_ = consumeToken(builder_, AS);
+    if (!result_) result_ = consumeToken(builder_, STRUCT);
+    if (!result_) result_ = consumeToken(builder_, INTERFACE);
+    if (!result_) result_ = consumeToken(builder_, ENUM);
+    if (!result_) result_ = consumeToken(builder_, AWAIT);
+    if (!result_) result_ = consumeToken(builder_, VAR);
+    if (!result_) result_ = consumeToken(builder_, CONST);
+    if (!result_) result_ = consumeToken(builder_, IF);
+    if (!result_) result_ = consumeToken(builder_, ELSE);
+    if (!result_) result_ = consumeToken(builder_, FOR);
+    if (!result_) result_ = consumeToken(builder_, SWITCH);
+    if (!result_) result_ = consumeToken(builder_, CASE);
+    if (!result_) result_ = consumeToken(builder_, DEFAULT);
+    if (!result_) result_ = consumeToken(builder_, RETURN);
+    if (!result_) result_ = consumeToken(builder_, BREAK);
+    if (!result_) result_ = consumeToken(builder_, CONTINUE);
+    if (!result_) result_ = consumeToken(builder_, DEFER);
+    if (!result_) result_ = consumeToken(builder_, TRY);
+    if (!result_) result_ = consumeToken(builder_, CATCH);
+    if (!result_) result_ = consumeToken(builder_, NEW);
+    if (!result_) result_ = consumeToken(builder_, NIL);
+    if (!result_) result_ = consumeToken(builder_, TRUE);
+    if (!result_) result_ = consumeToken(builder_, FALSE);
+    if (!result_) result_ = consumeToken(builder_, MAP);
+    if (!result_) result_ = consumeToken(builder_, THIS);
+    exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
 
@@ -920,7 +963,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // var_name (COMMA var_name)? IN (range_expr | expr)
+  // var_name (COMMA var_name)? IDENTIFIER (range_expr | expr)
   public static boolean for_in(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "for_in")) return false;
     if (!nextTokenIs(builder_, "<for in>", IDENTIFIER, UNDERSCORE)) return false;
@@ -928,7 +971,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
     Marker marker_ = enter_section_(builder_, level_, _NONE_, FOR_IN, "<for in>");
     result_ = var_name(builder_, level_ + 1);
     result_ = result_ && for_in_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, IN);
+    result_ = result_ && consumeToken(builder_, IDENTIFIER);
     result_ = result_ && for_in_3(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
@@ -1724,7 +1767,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // IDENTIFIER | NAMESPACE | IMPORT | AS | STRUCT | INTERFACE | ENUM | FUNC | STATIC | ASYNC | AWAIT | VAR | CONST | IF | ELSE | FOR | IN | SWITCH | CASE | DEFAULT | RETURN | BREAK | CONTINUE | DEFER | TRY | CATCH | NEW | NIL | TRUE | FALSE | MAP | THIS
+  // IDENTIFIER | NAMESPACE | IMPORT | AS | STRUCT | INTERFACE | ENUM | FUNC | STATIC | ASYNC | AWAIT | VAR | CONST | IF | ELSE | FOR | SWITCH | CASE | DEFAULT | RETURN | BREAK | CONTINUE | DEFER | TRY | CATCH | NEW | NIL | TRUE | FALSE | MAP | THIS
   public static boolean name_segment(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "name_segment")) return false;
     boolean result_;
@@ -1745,7 +1788,6 @@ public class ZellParser implements PsiParser, LightPsiParser {
     if (!result_) result_ = consumeToken(builder_, IF);
     if (!result_) result_ = consumeToken(builder_, ELSE);
     if (!result_) result_ = consumeToken(builder_, FOR);
-    if (!result_) result_ = consumeToken(builder_, IN);
     if (!result_) result_ = consumeToken(builder_, SWITCH);
     if (!result_) result_ = consumeToken(builder_, CASE);
     if (!result_) result_ = consumeToken(builder_, DEFAULT);
@@ -2665,7 +2707,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // attribute* ((struct_decl | interface_decl | enum_decl | func_decl) eos? | extern_func_decl eos | var_decl eos | const_decl eos)
+  // attribute* ((struct_decl | interface_decl | enum_decl | func_decl) eos? | extern_func_decl eos | var_decl eos | const_decl eos | type_alias_decl eos)
   public static boolean top_level_decl(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "top_level_decl")) return false;
     boolean result_;
@@ -2687,7 +2729,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // (struct_decl | interface_decl | enum_decl | func_decl) eos? | extern_func_decl eos | var_decl eos | const_decl eos
+  // (struct_decl | interface_decl | enum_decl | func_decl) eos? | extern_func_decl eos | var_decl eos | const_decl eos | type_alias_decl eos
   private static boolean top_level_decl_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "top_level_decl_1")) return false;
     boolean result_;
@@ -2696,6 +2738,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
     if (!result_) result_ = top_level_decl_1_1(builder_, level_ + 1);
     if (!result_) result_ = top_level_decl_1_2(builder_, level_ + 1);
     if (!result_) result_ = top_level_decl_1_3(builder_, level_ + 1);
+    if (!result_) result_ = top_level_decl_1_4(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -2757,6 +2800,17 @@ public class ZellParser implements PsiParser, LightPsiParser {
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = const_decl(builder_, level_ + 1);
+    result_ = result_ && eos(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // type_alias_decl eos
+  private static boolean top_level_decl_1_4(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "top_level_decl_1_4")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = type_alias_decl(builder_, level_ + 1);
     result_ = result_ && eos(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
@@ -2887,6 +2941,19 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
+  // IDENTIFIER IDENTIFIER ASSIGN type
+  public static boolean type_alias_decl(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "type_alias_decl")) return false;
+    if (!nextTokenIs(builder_, IDENTIFIER)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokens(builder_, 0, IDENTIFIER, IDENTIFIER, ASSIGN);
+    result_ = result_ && type(builder_, level_ + 1);
+    exit_section_(builder_, marker_, TYPE_ALIAS_DECL, result_);
+    return result_;
+  }
+
+  /* ********************************************************** */
   // type IDENTIFIER &(COLON | COMMA)
   public static boolean type_bind_pattern(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "type_bind_pattern")) return false;
@@ -2954,7 +3021,7 @@ public class ZellParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // VAR (IDENTIFIER | var_tuple) type? (ASSIGN expr)?
+  // VAR (var_name (COMMA var_name)* | var_tuple) type? (ASSIGN expr)?
   public static boolean var_decl(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "var_decl")) return false;
     if (!nextTokenIs(builder_, VAR)) return false;
@@ -2968,12 +3035,47 @@ public class ZellParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // IDENTIFIER | var_tuple
+  // var_name (COMMA var_name)* | var_tuple
   private static boolean var_decl_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "var_decl_1")) return false;
     boolean result_;
-    result_ = consumeToken(builder_, IDENTIFIER);
+    Marker marker_ = enter_section_(builder_);
+    result_ = var_decl_1_0(builder_, level_ + 1);
     if (!result_) result_ = var_tuple(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // var_name (COMMA var_name)*
+  private static boolean var_decl_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "var_decl_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = var_name(builder_, level_ + 1);
+    result_ = result_ && var_decl_1_0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (COMMA var_name)*
+  private static boolean var_decl_1_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "var_decl_1_0_1")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!var_decl_1_0_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "var_decl_1_0_1", pos_)) break;
+    }
+    return true;
+  }
+
+  // COMMA var_name
+  private static boolean var_decl_1_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "var_decl_1_0_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && var_name(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 

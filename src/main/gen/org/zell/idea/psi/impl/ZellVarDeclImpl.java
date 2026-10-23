@@ -40,15 +40,15 @@ public class ZellVarDeclImpl extends ASTWrapperPsiElement implements ZellVarDecl
   }
 
   @Override
-  @Nullable
-  public ZellVarTuple getVarTuple() {
-    return PsiTreeUtil.getChildOfType(this, ZellVarTuple.class);
+  @NotNull
+  public List<ZellVarName> getVarNameList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, ZellVarName.class);
   }
 
   @Override
   @Nullable
-  public PsiElement getIdentifier() {
-    return findChildByType(IDENTIFIER);
+  public ZellVarTuple getVarTuple() {
+    return PsiTreeUtil.getChildOfType(this, ZellVarTuple.class);
   }
 
 }

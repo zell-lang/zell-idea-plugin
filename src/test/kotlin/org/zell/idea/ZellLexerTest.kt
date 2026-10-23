@@ -29,16 +29,16 @@ class ZellLexerTest {
 
     @Test
     fun allKeywords() = check(
-        "namespace import as struct interface enum func static async await var const if else for in " +
+        "namespace import as struct interface enum func static async await var const if else for " +
             "switch case default return break continue defer try catch new nil true false map this _",
-        "NAMESPACE IMPORT AS STRUCT INTERFACE ENUM FUNC STATIC ASYNC AWAIT VAR CONST IF ELSE FOR IN " +
+        "NAMESPACE IMPORT AS STRUCT INTERFACE ENUM FUNC STATIC ASYNC AWAIT VAR CONST IF ELSE FOR " +
             "SWITCH CASE DEFAULT RETURN BREAK CONTINUE DEFER TRY CATCH NEW NIL TRUE FALSE MAP THIS UNDERSCORE SEMI",
     )
 
     @Test
     fun contextualKeywordsAreIdentifiers() = check(
-        "extern implements sealed weak namespaces",
-        "IDENTIFIER IDENTIFIER IDENTIFIER IDENTIFIER IDENTIFIER SEMI",
+        "extern implements sealed weak namespaces in type",
+        "IDENTIFIER IDENTIFIER IDENTIFIER IDENTIFIER IDENTIFIER IDENTIFIER IDENTIFIER SEMI",
     )
 
     @Test
@@ -124,6 +124,13 @@ class ZellLexerTest {
         "var x = 1\nx +\n2\nreturn\n}\n",
         "VAR IDENTIFIER ASSIGN INT_LITERAL SEMI IDENTIFIER PLUS INT_LITERAL SEMI RETURN SEMI RBRACE SEMI",
     )
+
+    @Test
+    fun leadingDotContinuesTheLine() {
+        check("a\n.b\n.c()\nd", "IDENTIFIER DOT IDENTIFIER DOT IDENTIFIER LPAREN RPAREN SEMI IDENTIFIER SEMI")
+        check("a // c\n\n  /* x */ .b", "IDENTIFIER DOT IDENTIFIER SEMI")
+        check("a\n..b", "IDENTIFIER SEMI DOTDOT IDENTIFIER SEMI")
+    }
 
     @Test
     fun noSemicolonAfterOpenBraceOrComma() =

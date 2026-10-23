@@ -35,8 +35,8 @@ public class ZellFieldInitImpl extends ASTWrapperPsiElement implements ZellField
 
   @Override
   @NotNull
-  public PsiElement getIdentifier() {
-    return notNullChild(findChildByType(IDENTIFIER));
+  public ZellFieldName getFieldName() {
+    return notNullChild(PsiTreeUtil.getChildOfType(this, ZellFieldName.class));
   }
 
 }

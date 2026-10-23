@@ -11,6 +11,6 @@ public interface ZellFieldInit extends PsiElement {
   ZellExpr getExpr();
 
   @NotNull
-  PsiElement getIdentifier();
+  ZellFieldName getFieldName();
 
 }

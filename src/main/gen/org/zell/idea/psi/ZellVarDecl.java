@@ -13,10 +13,10 @@ public interface ZellVarDecl extends PsiElement {
   @Nullable
   ZellType getType();
 
-  @Nullable
-  ZellVarTuple getVarTuple();
+  @NotNull
+  List<ZellVarName> getVarNameList();
 
   @Nullable
-  PsiElement getIdentifier();
+  ZellVarTuple getVarTuple();
 
 }

@@ -18,3 +18,11 @@ enum Color { Red, Green }
 func main() {
     println(Limit)
 }
+
+type Alias = int
+
+func loop(xs []int) {
+    for x in xs {
+        println(x)
+    }
+}

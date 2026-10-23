@@ -115,6 +115,10 @@ public class ZellVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitFieldName(@NotNull ZellFieldName o) {
+    visitPsiElement(o);
+  }
+
   public void visitForHeader(@NotNull ZellForHeader o) {
     visitPsiElement(o);
   }
@@ -312,6 +316,10 @@ public class ZellVisitor extends PsiElementVisitor {
   }
 
   public void visitType(@NotNull ZellType o) {
+    visitPsiElement(o);
+  }
+
+  public void visitTypeAliasDecl(@NotNull ZellTypeAliasDecl o) {
     visitPsiElement(o);
   }
 

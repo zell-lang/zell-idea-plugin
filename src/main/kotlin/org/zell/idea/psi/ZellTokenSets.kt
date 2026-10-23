@@ -23,7 +23,7 @@ object ZellTokenSets {
         ZellTypes.NAMESPACE, ZellTypes.IMPORT, ZellTypes.AS, ZellTypes.STRUCT,
         ZellTypes.INTERFACE, ZellTypes.ENUM, ZellTypes.FUNC, ZellTypes.STATIC,
         ZellTypes.ASYNC, ZellTypes.AWAIT, ZellTypes.VAR, ZellTypes.CONST,
-        ZellTypes.IF, ZellTypes.ELSE, ZellTypes.FOR, ZellTypes.IN,
+        ZellTypes.IF, ZellTypes.ELSE, ZellTypes.FOR,
         ZellTypes.SWITCH, ZellTypes.CASE, ZellTypes.DEFAULT, ZellTypes.RETURN,
         ZellTypes.BREAK, ZellTypes.CONTINUE, ZellTypes.DEFER, ZellTypes.TRY,
         ZellTypes.CATCH, ZellTypes.NEW, ZellTypes.MAP, ZellTypes.THIS,

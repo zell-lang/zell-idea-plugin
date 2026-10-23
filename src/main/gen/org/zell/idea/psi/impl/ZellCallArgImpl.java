@@ -35,8 +35,8 @@ public class ZellCallArgImpl extends ASTWrapperPsiElement implements ZellCallArg
 
   @Override
   @Nullable
-  public PsiElement getIdentifier() {
-    return findChildByType(IDENTIFIER);
+  public ZellFieldName getFieldName() {
+    return PsiTreeUtil.getChildOfType(this, ZellFieldName.class);
   }
 
 }

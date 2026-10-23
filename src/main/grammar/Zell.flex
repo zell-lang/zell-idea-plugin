@@ -87,7 +87,6 @@ LINE_COMMENT = "//" [^\n]*
   "if"               { return IF; }
   "else"             { return ELSE; }
   "for"              { return FOR; }
-  "in"               { return IN; }
   "switch"           { return SWITCH; }
   "case"             { return CASE; }
   "default"          { return DEFAULT; }

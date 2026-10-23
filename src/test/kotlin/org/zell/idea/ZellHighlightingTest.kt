@@ -44,6 +44,13 @@ class ZellHighlightingTest : BasePlatformTestCase() {
         assertEquals(ZellColors.FUNCTION_DECLARATION, keyOf("Area"))
         assertEquals(ZellColors.FUNCTION_DECLARATION, keyOf("main"))
         assertEquals(ZellColors.CONST_DECLARATION, keyOf("Limit"))
+        // contextual keywords are identifiers for the lexer; the annotator colours them
+        fun keyAt(anchor: String, delta: Int, len: Int): TextAttributesKey? {
+            val offset = myFixture.file.text.indexOf(anchor) + delta
+            return infos.firstOrNull { it.startOffset == offset && it.endOffset == offset + len }?.forcedTextAttributesKey
+        }
+        assertEquals(ZellColors.KEYWORD, keyAt("type Alias", 0, 4))
+        assertEquals(ZellColors.KEYWORD, keyAt("x in xs", 2, 2))
     }
 
     private fun lexerColors(src: String): Map<String, TextAttributesKey?> {

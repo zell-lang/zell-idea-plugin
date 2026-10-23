@@ -11,6 +11,6 @@ public interface ZellAttributeArg extends PsiElement {
   ZellExpr getExpr();
 
   @Nullable
-  PsiElement getIdentifier();
+  ZellFieldName getFieldName();
 
 }

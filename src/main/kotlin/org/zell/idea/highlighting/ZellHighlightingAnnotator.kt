@@ -26,10 +26,23 @@ class ZellHighlightingAnnotator : Annotator, DumbAware {
                 ZellTypes.NAMESPACE_DECL, ZellTypes.IMPORT_DECL -> ZellColors.NAMESPACE
                 else -> null
             }
-            ZellTypes.IDENTIFIER, ZellTypes.DEFAULT -> declarationKey(element)
+            ZellTypes.IDENTIFIER -> softKeywordKey(element) ?: declarationKey(element)
+            ZellTypes.DEFAULT -> declarationKey(element)
             else -> null
         } ?: return
         holder.newSilentAnnotation(HighlightSeverity.INFORMATION).textAttributes(key).create()
+    }
+
+    /** Contextual keywords, which the lexer emits as identifiers: `in` of `for ... in`, `type` of `type X = T`. */
+    private fun softKeywordKey(element: PsiElement): TextAttributesKey? {
+        val parent = element.parent?.node ?: return null
+        return when (parent.elementType) {
+            // var_name is its own node, so the only direct IDENTIFIER child of for_in is `in`.
+            ZellTypes.FOR_IN -> if (element.text == "in") ZellColors.KEYWORD else null
+            ZellTypes.TYPE_ALIAS_DECL ->
+                if (parent.firstChildNode == element.node && element.text == "type") ZellColors.KEYWORD else null
+            else -> null
+        }
     }
 
     private fun declarationKey(element: PsiElement): TextAttributesKey? {

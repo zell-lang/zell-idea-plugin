@@ -11,7 +11,8 @@ import org.zell.idea.psi.ZellTypes
  * mirroring `compiler/src/lexer.rs` of the zell repository exactly:
  *
  * - at a newline (in whitespace or inside a multi-line block comment) and at
- *   the end of the input, a [ZellTypes.SEMI] is inserted when the previous
+ *   the end of the input, unless the next significant token is `.` (a line
+ *   starting with a dot continues the previous one), a [ZellTypes.SEMI] is inserted when the previous
  *   significant token ends a statement ([endsStatement], = `TokenKind::ends_statement`)
  *   or is a keyword directly after `.` (`namespace examples.async`);
  * - nothing is inserted while the innermost open delimiter is `(` or `[`
@@ -80,12 +81,25 @@ class ZellLexer : LexerBase() {
         // Index in the output after which an automatic semicolon goes.
         var insertAfter = -1
 
+        // A newline that would end a statement: the semicolon is only decided
+        // at the next significant token, because a line starting with `.`
+        // continues the previous one.
+        var pending = false
+
         fun maybeInsertSemi() {
+            if (pending) return
             val l = last ?: return
             val top = delims.lastOrNull()
             if (top == ZellTypes.LPAREN || top == ZellTypes.LBRACKET) return
             val keywordName = beforeLast == ZellTypes.DOT && l in KEYWORDS
             if (!endsStatement(l) && !keywordName) return
+            pending = true
+        }
+
+        fun flushSemi() {
+            if (!pending) return
+            pending = false
+            val l = last ?: return
             val at = ends[insertAfter]
             insert(insertAfter + 1, ZellTypes.SEMI, at, at)
             insertAfter += 1
@@ -112,6 +126,7 @@ class ZellLexer : LexerBase() {
                 // The compiler skips unknown characters without a token.
                 TokenType.BAD_CHARACTER -> add(type, s, e)
                 else -> {
+                    if (type == ZellTypes.DOT) pending = false else flushSemi()
                     when (type) {
                         ZellTypes.SHR -> {
                             add(ZellTypes.GT, s, s + 1)
@@ -136,6 +151,7 @@ class ZellLexer : LexerBase() {
             flex.advance()
         }
         maybeInsertSemi()
+        flushSemi()
     }
 
     private fun containsNewline(start: Int, end: Int): Boolean {
@@ -172,7 +188,7 @@ class ZellLexer : LexerBase() {
             ZellTypes.NAMESPACE, ZellTypes.IMPORT, ZellTypes.AS, ZellTypes.STRUCT,
             ZellTypes.INTERFACE, ZellTypes.ENUM, ZellTypes.FUNC, ZellTypes.STATIC,
             ZellTypes.ASYNC, ZellTypes.AWAIT, ZellTypes.VAR, ZellTypes.CONST,
-            ZellTypes.IF, ZellTypes.ELSE, ZellTypes.FOR, ZellTypes.IN,
+            ZellTypes.IF, ZellTypes.ELSE, ZellTypes.FOR,
             ZellTypes.SWITCH, ZellTypes.CASE, ZellTypes.DEFAULT, ZellTypes.RETURN,
             ZellTypes.BREAK, ZellTypes.CONTINUE, ZellTypes.DEFER, ZellTypes.TRY,
             ZellTypes.CATCH, ZellTypes.NEW, ZellTypes.NIL, ZellTypes.TRUE,
